@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đọc sách - Heyzine</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .card {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    .card h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .card button {
+      background: #007bff;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+    .card button:hover {
+      background: #0056b3;
+    }
+    .counter {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>📖 Đọc sách miễn phí</h1>
+    <button id="readBtn">Đọc ngay</button>
+    <div class="counter">
+      🔥 Đã có <span id="viewCount">...</span> lượt đọc
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyC1QnHGKZnKZtQ5XXSp85LGkKB95XYm5Ek",
+      authDomain: "docsach-a9ccd.firebaseapp.com",
+      databaseURL: "https://docsach-a9ccd-default-rtdb.firebaseio.com",
+      projectId: "docsach-a9ccd",
+      storageBucket: "docsach-a9ccd.firebasestorage.app",
+      messagingSenderId: "347611589574",
+      appId: "1:347611589574:web:955dea1c12f7deaec360c7"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const docRef = db.collection("readStats").doc("counter");
+
+    async function incrementCounter() {
+      await docRef.set({ views: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+    }
+
+    async function fetchViews() {
+      const doc = await docRef.get();
+      if (doc.exists && doc.data().views !== undefined) {
+        document.getElementById("viewCount").textContent = doc.data().views;
+      } else {
+        document.getElementById("viewCount").textContent = 0;
+      }
+    }
+
+    document.getElementById("readBtn").addEventListener("click", async () => {
+      await incrementCounter();
+      window.open("https://heyzine.com/flip-book/d2e5ba5466.html", "_blank");
+    });
+
+    fetchViews();
+  </script>
+</body>
+</html>
